@@ -1,4 +1,4 @@
-# Pull Request for laravel-backend-granada
+# Pull Request for vue-frontend-granada
 
 ## Description
 Provide a short description of the change(s) made.
