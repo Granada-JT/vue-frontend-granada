@@ -1,16 +1,38 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import axios from 'axios'
 import WelcomeItem from './LoginItem.vue'
-import DocumentationIcon from './icons/IconDocumentation.vue'
-import ToolingIcon from './icons/IconTooling.vue'
-
-const openReadmeInEditor = () => fetch('/__open-in-editor?file=README.md')
 
 const password = ref('')
 const email = ref('')
-const handleSubmit = () => {
-  // TO DO: Add login logic / API Call here
-}
+const handleSubmit = async () => {
+  try {
+    await axios.get('http://localhost:8000/login');
+
+    const xsrfTokenRow = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('XSRF-TOKEN='));
+
+    const xsrfToken = xsrfTokenRow ? decodeURIComponent(xsrfTokenRow.split('=')[1]) : undefined;
+
+    await axios.post(
+      'http://localhost:8000/login',
+      {
+        email: email.value,
+        password: password.value,
+      },
+      {
+        headers: {
+          'X-XSRF-TOKEN': xsrfToken,
+        },
+        withCredentials: true,
+      }
+    );
+
+  } catch (error) {
+    console.error('Failed to login:', error);
+  }
+};
 </script>
 <style>
   form {
