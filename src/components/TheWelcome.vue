@@ -5,6 +5,39 @@ import WelcomeItem from './LoginItem.vue'
 
 const password = ref('')
 const email = ref('')
+const users = ref<User[]>([]);
+
+interface Role {
+  created_at: string;
+  description: string | null;
+  id: number;
+  name: string;
+  updated_at: string;
+}
+
+interface User {
+  created_at: string;
+  email: string;
+  id: number;
+  name: string;
+  password: string;
+  role: Role;
+  role_id: number;
+  updated_at: string;
+}
+
+const fetchUsers = async () => {
+  try {
+    const usersResponse = await axios.get('http://localhost:8000/users', { withCredentials: true });
+
+    if (usersResponse.status === 200) {
+      users.value = usersResponse.data;
+    }
+  } catch (error) {
+    console.error('Failed to fetch users:', error);
+  }
+};
+
 const handleSubmit = async () => {
   try {
     await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true });
@@ -15,7 +48,7 @@ const handleSubmit = async () => {
 
     const xsrfToken = xsrfTokenRow ? decodeURIComponent(xsrfTokenRow.split('=')[1]) : undefined;
 
-    await axios.post(
+    const postLoginResponse = await axios.post(
       'http://localhost:8000/login',
       {
         email: email.value,
@@ -28,6 +61,10 @@ const handleSubmit = async () => {
         withCredentials: true,
       }
     );
+
+    if (postLoginResponse.status === 200) {
+      await fetchUsers();
+    }
 
   } catch (error) {
     console.error('Failed to login:', error);
@@ -75,6 +112,7 @@ const handleSubmit = async () => {
 
 <template>
   <form @submit.prevent="handleSubmit">
+    <h1 v-if="users.length > 0">{{ users[0].name }}</h1>
     <WelcomeItem>
       <template #heading>
         Email:
