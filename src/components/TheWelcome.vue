@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import axios from 'axios'
+import { useAuthStore } from '@/stores/auth'
 import WelcomeItem from './LoginItem.vue'
 
 const password = ref('')
 const email = ref('')
 const users = ref<User[]>([]);
+
+const authStore = useAuthStore()
 
 interface Role {
   created_at: string;
@@ -63,6 +66,7 @@ const handleSubmit = async () => {
     );
 
     if (postLoginResponse.status === 200) {
+      authStore.login()
       await fetchUsers();
     }
 
@@ -113,6 +117,9 @@ const handleSubmit = async () => {
 <template>
   <form @submit.prevent="handleSubmit">
     <h1 v-if="users.length > 0">{{ users[0].name }}</h1>
+    <h3 v-if="!authStore.isLoggedIn">
+      Please login to continue.
+    </h3>
     <WelcomeItem>
       <template #heading>
         Email:
