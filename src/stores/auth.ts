@@ -1,4 +1,3 @@
-// store.js
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
