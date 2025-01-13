@@ -1,22 +1,28 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
+import { useUsersStore } from '@/stores/users'
 import WelcomeItem from './LoginItem.vue'
-import type { User } from '../types/users'
+import type { User } from '@/types/users'
 
 const password = ref('')
 const email = ref('')
 const users = ref<User[]>([]);
 
 const authStore = useAuthStore()
+const usersStore = useUsersStore()
+
+const router = useRouter()
 
 const fetchUsers = async () => {
   try {
     const usersResponse = await axios.get('http://localhost:8000/users', { withCredentials: true });
 
     if (usersResponse.status === 200) {
-      users.value = usersResponse.data;
+      users.value = usersResponse.data
+      usersStore.updateUsers(usersResponse.data)
     }
   } catch (error) {
     console.error('Failed to fetch users:', error);
@@ -49,6 +55,7 @@ const handleSubmit = async () => {
 
     if (postLoginResponse.status === 200) {
       authStore.login()
+      router.push('/home')
       await fetchUsers();
     }
 
@@ -56,7 +63,7 @@ const handleSubmit = async () => {
     console.error('Failed to login:', error);
   }
 };
-console.log('users: ', users)
+
 </script>
 <style>
   form {
