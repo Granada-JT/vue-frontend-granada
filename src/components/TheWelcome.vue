@@ -3,31 +3,13 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 import WelcomeItem from './LoginItem.vue'
+import type { User } from '../types/users'
 
 const password = ref('')
 const email = ref('')
 const users = ref<User[]>([]);
 
 const authStore = useAuthStore()
-
-interface Role {
-  created_at: string;
-  description: string | null;
-  id: number;
-  name: string;
-  updated_at: string;
-}
-
-interface User {
-  created_at: string;
-  email: string;
-  id: number;
-  name: string;
-  password: string;
-  role: Role;
-  role_id: number;
-  updated_at: string;
-}
 
 const fetchUsers = async () => {
   try {
@@ -74,6 +56,7 @@ const handleSubmit = async () => {
     console.error('Failed to login:', error);
   }
 };
+console.log('users: ', users)
 </script>
 <style>
   form {
