@@ -7,7 +7,7 @@ const password = ref('')
 const email = ref('')
 const handleSubmit = async () => {
   try {
-    await axios.get('http://localhost:8000/login');
+    await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true });
 
     const xsrfTokenRow = document.cookie
       .split('; ')
