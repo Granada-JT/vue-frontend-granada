@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 import { useUsersStore } from '@/stores/users'
-import WelcomeItem from './LoginItem.vue'
+import LoginItem from './LoginItem.vue'
 import type { User } from '@/types/users'
 
 const password = ref('')
@@ -106,18 +106,14 @@ const handleSubmit = async () => {
 
 <template>
   <form @submit.prevent="handleSubmit">
-    <h1 v-if="users.length > 0">{{ users[0].name }}</h1>
-    <h3 v-if="!authStore.isLoggedIn">
-      Please login to continue.
-    </h3>
-    <WelcomeItem>
+    <LoginItem>
       <template #heading>
         Email:
       </template>
       <input type="email" v-model="email" />
-    </WelcomeItem>
+    </LoginItem>
 
-    <WelcomeItem>
+    <LoginItem>
       <template #heading>
         Password:
       </template>
@@ -125,6 +121,6 @@ const handleSubmit = async () => {
         <input type="password" v-model="password" />
         <button type="submit">Login</button>
       </div>
-    </WelcomeItem>
+    </LoginItem>
   </form>
 </template>
