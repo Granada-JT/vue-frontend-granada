@@ -16,3 +16,11 @@ export interface User {
   role_id: number;
   updated_at: string;
 }
+
+export interface CreateUser {
+  fullname: string;
+  email: string;
+  nominatedPassword: string;
+  confirmPassword: string;
+  role: string;
+}
