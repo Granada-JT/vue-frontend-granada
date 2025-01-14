@@ -1,19 +1,14 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import WelcomeMessage from './components/WelcomeMessage.vue'
+import DashBoard from './components/RoleDashBoard.vue';
+import LoginView from './views/LoginView.vue';
 </script>
 
 <template>
   <header>
     <div class="wrapper">
-      <HelloWorld msg="Welcome!" />
-
-      <!-- <nav> -->
-        <!-- ToDo: Conditionally Render to Logout when user is logged in -->
-        <!-- <RouterLink to="/">Login</RouterLink> -->
-        <!-- ToDo: Enable home when user has successfully logged in -->
-        <!-- <RouterLink to="/about">Home</RouterLink> -->
-      <!-- </nav> -->
+      <WelcomeMessage msg="Welcome!" />
     </div>
   </header>
 
@@ -24,6 +19,10 @@ import HelloWorld from './components/HelloWorld.vue'
 header {
   line-height: 1.5;
   max-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .logo {
@@ -54,6 +53,13 @@ nav a {
 
 nav a:first-of-type {
   border: 0;
+}
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 @media (min-width: 1024px) {
