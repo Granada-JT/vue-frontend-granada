@@ -125,6 +125,12 @@ const handleSubmit = async () => {
         <button type="submit">Login</button>
       </div>
     </LoginItem>
-    <button class="logout" v-if="authStore.isLoggedIn">Logout</button>
+    <button
+      class="logout"
+      v-if="authStore.isLoggedIn"
+      @click="authStore.logout(), usersStore.updateUsers(null)"
+    >
+      Logout
+    </button>
   </form>
 </template>
