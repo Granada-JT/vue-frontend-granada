@@ -3,10 +3,8 @@ defineProps<{
   msg: string
 }>()
 import { useAuthStore } from '@/stores/auth'
-import { useUsersStore } from '@/stores/users'
 
 const authStore = useAuthStore()
-const usersStore = useUsersStore()
 </script>
 
 <template>
@@ -15,7 +13,7 @@ const usersStore = useUsersStore()
     <h3 v-if="!authStore.isLoggedIn">
       Please login to continue.
     </h3>
-    <h1 v-if="usersStore?.users?.length">{{ usersStore?.users[0]?.name }}</h1>
+    <h1 v-if="authStore.loggedInUser">{{ authStore.loggedInUser.name }}</h1>
   </div>
 </template>
 
