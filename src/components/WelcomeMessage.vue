@@ -4,7 +4,6 @@ defineProps<{
 }>()
 import { useAuthStore } from '@/stores/auth'
 import { useUsersStore } from '@/stores/users'
-import UserDashBoard from './UserDashBoard.vue';
 
 const authStore = useAuthStore()
 const usersStore = useUsersStore()
@@ -17,7 +16,6 @@ const usersStore = useUsersStore()
       Please login to continue.
     </h3>
     <h1 v-if="usersStore.users.length > 0">{{ usersStore.users[0].name }}</h1>
-    <UserDashBoard v-if="authStore.isLoggedIn" />
   </div>
 </template>
 

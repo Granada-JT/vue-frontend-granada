@@ -19,7 +19,6 @@ const handleSubmit = async (e: Event) => {
 
 <template>
 	<div class="roledb-wrapper">
-		<button class="logout">Logout</button>
 		<div class="role-dashboard">
 			<h1>Create Role</h1>
 			<form @submit.prevent="handleSubmit">
@@ -40,18 +39,16 @@ const handleSubmit = async (e: Event) => {
 		justify-content: center;
 		flex-direction: column;
 		align-self: flex-end;
+		margin: 0px 12px;
 	}
 
 	.role-dashboard {
 		height: 500px;
 		width: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: flex-start;
 	}
 
-	.logout {
-		background-color: brown;
-	}
-
-	.logout:hover {
-		background-color: rgb(233, 43, 43);
-	}
 </style>

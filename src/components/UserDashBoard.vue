@@ -56,24 +56,14 @@ const handleSubmit = async (e: Event) => {
 </template>
 
 <style>
-	div {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		flex-direction: column;
-	}
-
 	.user-dashboard {
 		height: 500px;
 		width: 100%;
-	}
-
-	.logout {
-		background-color: brown;
-	}
-
-	.logout:hover {
-		background-color: rgb(233, 43, 43);
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		flex-direction: column;
+		margin-top: 20px;
 	}
 
 	input {
@@ -90,5 +80,13 @@ const handleSubmit = async (e: Event) => {
 
 	button {
 		margin-top: 20px;
+	}
+
+	.logout {
+		background-color: brown;
+	}
+
+	.logout:hover {
+		background-color: rgb(233, 43, 43);
 	}
 </style>
