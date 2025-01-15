@@ -102,18 +102,21 @@ const handleSubmit = async () => {
     box-shadow: none;
     border: none;
   }
+  .logout {
+    margin: auto;
+  }
 </style>
 
 <template>
   <form @submit.prevent="handleSubmit">
-    <LoginItem>
+    <LoginItem v-if="!authStore.isLoggedIn">
       <template #heading>
         Email:
       </template>
       <input type="email" v-model="email" />
     </LoginItem>
 
-    <LoginItem>
+    <LoginItem v-if="!authStore.isLoggedIn">
       <template #heading>
         Password:
       </template>
@@ -122,5 +125,6 @@ const handleSubmit = async () => {
         <button type="submit">Login</button>
       </div>
     </LoginItem>
+    <button class="logout" v-if="authStore.isLoggedIn">Logout</button>
   </form>
 </template>
