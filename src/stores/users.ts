@@ -4,7 +4,7 @@ import type { User, Role } from '@/types/users'
 
 export const useUsersStore = defineStore('users', () => {
 	
-	const users = ref<User[]>([
+	const users = ref<User[] | null>([
 		{
 			id: 0,
 			name: '',
@@ -23,7 +23,7 @@ export const useUsersStore = defineStore('users', () => {
 		},
 	]);
 
-	function updateUsers(updatedUsers: User[]) {
+	function updateUsers(updatedUsers: User[] | null) {
 		users.value = updatedUsers
 	}
 
