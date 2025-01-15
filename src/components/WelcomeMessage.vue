@@ -15,7 +15,7 @@ const usersStore = useUsersStore()
     <h3 v-if="!authStore.isLoggedIn">
       Please login to continue.
     </h3>
-    <h1 v-if="usersStore.users.length > 0">{{ usersStore.users[0].name }}</h1>
+    <h1 v-if="usersStore?.users?.length">{{ usersStore?.users[0]?.name }}</h1>
   </div>
 </template>
 
