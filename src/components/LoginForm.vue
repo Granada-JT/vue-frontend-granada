@@ -53,8 +53,21 @@ const handleSubmit = async () => {
       }
     );
 
+    const getUserByEmailResponse = await axios.get(
+      `http://localhost:8000/users/email/${email.value}`,
+      {
+        headers: {
+          'X-XSRF-TOKEN': xsrfToken,
+        },
+        withCredentials: true,
+      }
+    );
+
     if (postLoginResponse.status === 200) {
       authStore.login()
+      if (getUserByEmailResponse.status === 200) {
+        authStore.updateLoggedInUser(getUserByEmailResponse.data)
+      }
       router.push('/home')
       await fetchUsers();
     }
