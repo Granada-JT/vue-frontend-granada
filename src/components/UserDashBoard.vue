@@ -17,7 +17,7 @@ const handleSubmit = async (e: Event) => {
   try {
     const formData = new FormData(e.target as HTMLFormElement);
     const values = Object.fromEntries(formData.entries());
-
+		
 		// ToDo: Add API Call
   } catch (error) {
     console.error(error);
@@ -65,7 +65,7 @@ const handleSubmit = async (e: Event) => {
 
 	.user-dashboard {
 		height: 500px;
-		width: 500px
+		width: 100%;
 	}
 
 	.logout {
@@ -83,12 +83,12 @@ const handleSubmit = async (e: Event) => {
     border: none;
   }
 
-	.user-dashboard label {
+	label {
 		align-self: flex-start;
 		margin: 14px 0px 2px 0px;
 	}
 
-	.user-dashboard button {
+	button {
 		margin-top: 20px;
 	}
 </style>
