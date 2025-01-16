@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { useUsersStore } from '@/stores/users'
+import { useToast } from 'vue-toast-notification'
 
 const fullName = ref<string>('')
 const email = ref<string>('')
@@ -11,12 +12,65 @@ const roleId = ref<number>(0)
 const isUpdate = ref<boolean>(false)
 const userId = ref<number>(0)
 
+const toast = useToast()
+
 const usersStore = useUsersStore()
 
-const handleSubmit = async (e: Event) => {
+const errors = ref({
+  fullName: '',
+  email: '',
+  nominatedPassword: '',
+  confirmPassword: '',
+  roleId: '',
+})
+
+const validateForm = (): boolean => {
+  let isValid = true
+  errors.value = {
+    fullName: '',
+    email: '',
+    nominatedPassword: '',
+    confirmPassword: '',
+    roleId: '',
+  }
+
+  if (!fullName.value.trim()) {
+    errors.value.fullName = 'Full name is required'
+    isValid = false
+  }
+  if (!email.value.trim()) {
+    errors.value.email = 'Email is required.'
+    isValid = false
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+    errors.value.email = 'Invalid email address'
+    isValid = false
+  }
+  if (!nominatedPassword.value.trim()) {
+    errors.value.nominatedPassword = 'Password is required'
+    isValid = false
+  }
+	if (nominatedPassword.value.trim() && nominatedPassword.value.length < 8) {
+		errors.value.nominatedPassword = 'Min. of 8 characters required'
+    isValid = false
+	}
+  if (nominatedPassword.value !== confirmPassword.value) {
+    errors.value.confirmPassword = 'Passwords do not match'
+    isValid = false
+  }
+  if (!roleId.value || roleId.value <= 0) {
+    errors.value.roleId = 'Invalid role id'
+    isValid = false
+  }
+
+  return isValid
+}
+
+const handleSubmit = async () => {
+	if (!validateForm()) return
+
   try {
 		if (nominatedPassword.value !== confirmPassword.value) {
-      throw new Error('Passwords do not match.');
+      throw new Error('Passwords do not match.')
     }
 
 		const payload = {
@@ -26,27 +80,51 @@ const handleSubmit = async (e: Event) => {
 			role_id: roleId.value
 		}
 
-		await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true });
+		await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true })
 
 		const xsrfTokenRow = document.cookie
 			.split('; ')
 			.find((row) => row.startsWith('XSRF-TOKEN='));
 
-		const xsrfToken = xsrfTokenRow ? decodeURIComponent(xsrfTokenRow.split('=')[1]) : undefined;
+		const xsrfToken = xsrfTokenRow ? decodeURIComponent(xsrfTokenRow.split('=')[1]) : undefined
 
 		if (isUpdate.value) {
+			toast.clear()
+			toast.info('Updating User', {
+				position: 'top',
+				dismissible: false,
+				duration: 86400000
+			})
+
       const response = await axios.put(`http://localhost:8000/users/${userId.value}`, payload, {
         headers: {
           'X-XSRF-TOKEN': xsrfToken,
         },
         withCredentials: true,
-      });
+      })
 
       if (response.status === 200) {
-				// ToDo Replace with toast
-        console.log('User updated successfully', response.data);
+				usersStore.fetchUsers()
+				isUpdate.value = false
+				fullName.value = ''
+				email.value = ''
+				nominatedPassword.value = ''
+				confirmPassword.value = ''
+				roleId.value = 0
+				toast.clear()
+				toast.success('User Updated Successfully', {
+					position: 'top',
+					duration: 3000
+				})
       }
 		} else {
+			toast.clear()
+			toast.info('Creating User', {
+				position: 'top',
+				dismissible: false,
+				duration: 86400000
+			})
+
 			const response = await axios.post('http://localhost:8000/users', payload,
 				{
 					headers: {
@@ -57,16 +135,52 @@ const handleSubmit = async (e: Event) => {
 			)
 
 			if (response.status === 201) {
-				// ToDo Replace with toast
-				console.log('User Created Successfuly');
-				(e.target as HTMLFormElement).reset()
+				usersStore.fetchUsers()
+				fullName.value = ''
+				email.value = ''
+				nominatedPassword.value = ''
+				confirmPassword.value = ''
+				roleId.value = 0
+				toast.clear()
+				toast.success('User Created Successfully', {
+					position: 'top',
+					duration: 3000
+				})
 			}
 		}
 
-		
   } catch (error) {
-		// ToDo add toast
-    console.error(error);
+		if (isUpdate.value) {
+			console.error('Failed Updating User: ', error)
+			toast.clear()
+			toast.error('Failed Updating User', {
+				position: 'top',
+				duration: 3000
+			})
+		} else {
+			console.error('Failed Creating User: ', error)
+			toast.clear()
+			const axiosError = error as AxiosError
+			let errorMsg = ''
+
+			if (axiosError.response && axiosError.response.data) {
+				const responseData = axiosError.response.data as { message?: string };
+				if (responseData.message?.includes('name')) {
+					errorMsg = 'Name already exists';
+				}
+				if (responseData.message?.includes('email')) {
+					errorMsg = 'Email already exists';
+				}
+				if (responseData.message?.includes('role')) {
+					errorMsg = 'Invalid role id';
+				}
+			}
+
+			toast.error(`Failed Creating User: ${errorMsg}`, {
+				position: 'top',
+				duration: 3000
+			})
+		}
   }
 }
 
@@ -80,7 +194,8 @@ const handleUpdate = async (id: number) => {
 				fullName.value = user.name,
 				email.value = user.email,
 				nominatedPassword.value = user.password,
-				roleId.value = user.role_id
+				roleId.value = user.role_id,
+				confirmPassword.value = ''
 			}
 		})
 	}
@@ -88,6 +203,13 @@ const handleUpdate = async (id: number) => {
 
 const handleDelete = async (id: number) => {
 	try {
+		toast.clear()
+		toast.info('Deleting Role', {
+			position: 'top',
+			dismissible: false,
+			duration: 86400000
+		})
+
 		await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true });
 
 		const xsrfTokenRow = document.cookie
@@ -103,37 +225,53 @@ const handleDelete = async (id: number) => {
 			withCredentials: true,
 		});
 
-		console.log('response: ', response)
-
 		if (response.status === 204) {
-			// ToDo Replace with toast
-			console.log('User Deleted Successfully')
+			usersStore.fetchUsers()
+			toast.clear()
+			toast.success('User Deleted Successfully', {
+				position: 'top',
+				duration: 3000
+			})
 		}
 	} catch (error) {
-		// ToDo add toast
-		console.error('Failed in deleting user: ', error)
+		console.error('Failed Deleting User: ', error)
+		toast.clear()
+		toast.error('Failed Deleting User', {
+			position: 'top',
+			duration: 3000
+		})
 	}
 }
 
+const handleCancel = () => {
+	isUpdate.value = false
+	fullName.value = ''
+	email.value = ''
+	nominatedPassword.value = ''
+	confirmPassword.value = ''
+	roleId.value = 0
+}
 </script>
 
 <template>
 	<div class="user-dashboard">
 		<form class="user-form" @submit.prevent="handleSubmit">
 			<h1 v-if="!isUpdate">Create User</h1>
-			<h1 v-else="isUpdate">Update User</h1>
+			<h1 v-else>Update User</h1>
 			<div>
 				<div class="input-block">
 					<label>
 						Full Name:
 					</label>
 					<input type="text" name="fullname" v-model="fullName" />
+					<span class="error" v-if="errors.fullName">{{ errors.fullName }}</span>
 				</div>
 				<div class="input-block">
 					<label>
 						Email Address:
 					</label>
 					<input type="email" name="email" v-model="email" />
+					<span class="error" v-if="errors.email">{{ errors.email }}</span>
 				</div>
 			</div>
 			<div>
@@ -142,12 +280,14 @@ const handleDelete = async (id: number) => {
 						Password:
 					</label>
 					<input type="password" name="nominatedPassword" v-model="nominatedPassword" />
+					<span class="error" v-if="errors.nominatedPassword">{{ errors.nominatedPassword }}</span>
 				</div>
 				<div class="input-block">
 					<label>
 						Confirm Password:
 					</label>
 					<input type="password" name="confirmPassword" v-model="confirmPassword"/>
+					<span class="error" v-if="errors.confirmPassword">{{ errors.confirmPassword }}</span>
 				</div>
 			</div>
 			<div class="input-block">
@@ -155,9 +295,13 @@ const handleDelete = async (id: number) => {
 					Assign Role:
 				</label>
 				<input type="number" name="role" v-model="roleId"/>
+				<span class="error" v-if="errors.roleId">{{ errors.roleId }}</span>
 			</div>
-			<button type="submit" v-if="!isUpdate">Create User</button>
-			<button type="submit" v-else="isUpdate">Update User</button>
+			<div class="sumbmit-btns">
+				<button type="submit" v-if="!isUpdate">Create User</button>
+				<button type="submit" v-else class="update-btn">Update User</button>
+				<button v-if="isUpdate" @click="handleCancel" class="cancel-btn" type="submit">Cancel</button>
+			</div>
 		</form>
     <div class="table">
       <h1>Users</h1>
@@ -200,6 +344,10 @@ const handleDelete = async (id: number) => {
 		text-align: center;
 	}
 
+	.error {
+		color: #fa6565;
+	}
+
 	.user-form {
 		display: flex;
 		flex-direction: column;
@@ -218,9 +366,10 @@ const handleDelete = async (id: number) => {
 
 	input {
     height: 30px;
-    border-radius: 5px;;
+    border-radius: 5px;
     box-shadow: none;
     border: none;
+		padding: 10px;
   }
 
 	label {
@@ -234,12 +383,11 @@ const handleDelete = async (id: number) => {
 	}
 
 	.logout {
-		background-color: brown;
+		background-color: #9b1e1e;
 	}
 
 	.logout:hover {
-		background-color: rgb(233, 43, 43);
-	}
+		background-color: #7a1515;	}
 
 	table {
 		width: 100%;
@@ -267,15 +415,19 @@ const handleDelete = async (id: number) => {
     cursor: pointer;
   }
 
-  .table button:hover {
-    background-color: #000000;
-  }
-
 	.delete-btn {
 		background-color: #9b1e1e;
 	}
 
+	.delete-btn:hover {
+		background-color: #7a1515;
+	}
+
 	.update-btn {
 		background-color: #3974a1;
+	}
+
+	.update-btn:hover {
+		background-color: #2f6681;
 	}
 </style>
