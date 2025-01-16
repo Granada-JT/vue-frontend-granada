@@ -22,6 +22,7 @@ const fetchUsers = async () => {
 
     if (usersResponse.status === 200) {
       users.value = usersResponse.data
+      console.log('usrs.value: ', usersResponse.data)
       usersStore.updateUsers(usersResponse.data)
     }
   } catch (error) {
