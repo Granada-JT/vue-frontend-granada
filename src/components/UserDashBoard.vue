@@ -9,6 +9,7 @@ const nominatedPassword = ref<string>('')
 const confirmPassword = ref<string>('')
 const roleId = ref<number>(0)
 const isUpdate = ref<boolean>(false)
+const userId = ref<number>(0)
 
 const usersStore = useUsersStore()
 
@@ -33,30 +34,46 @@ const handleSubmit = async (e: Event) => {
 
 		const xsrfToken = xsrfTokenRow ? decodeURIComponent(xsrfTokenRow.split('=')[1]) : undefined;
 
-		const response = await axios.post('http://localhost:8000/users', payload,
-			{
+		if (isUpdate) {
+      const response = await axios.put(`http://localhost:8000/users/${userId.value}`, payload, {
         headers: {
           'X-XSRF-TOKEN': xsrfToken,
         },
         withCredentials: true,
-      }
-		)
+      });
 
-		if (response.status === 201) {
-			(e.target as HTMLFormElement).reset();
+      if (response.status === 200) {
+				// ToDo: Change to toaster
+        console.log('User updated successfully', response.data);
+      }
+		} else {
+			const response = await axios.post('http://localhost:8000/users', payload,
+				{
+					headers: {
+						'X-XSRF-TOKEN': xsrfToken,
+					},
+					withCredentials: true,
+				}
+			)
+
+			if (response.status === 201) {
+				(e.target as HTMLFormElement).reset();
+			}
 		}
+
 		
   } catch (error) {
     console.error(error);
   }
 }
 
-const handleUpdate = async (userId: number) => {
-	// ToDo Update user api call
+const handleUpdate = async (id: number) => {
+	isUpdate.value = true
+	userId.value = id
 	const usersArray = usersStore.users
 	if (usersArray) {
 		usersArray.map((user) => {
-			if (userId === user.id) {
+			if (id === user.id) {
 				fullName.value = user.name,
 				email.value = user.email,
 				nominatedPassword.value = user.password,
@@ -64,12 +81,10 @@ const handleUpdate = async (userId: number) => {
 			}
 		})
 	}
-	isUpdate.value = true
 }
 
-const handleDelete = async (userId: number) => {
+const handleDelete = async (id: number) => {
 	// ToDo Delete user api call
-	alert('delete amp')
 }
 
 </script>
