@@ -34,7 +34,7 @@ const handleSubmit = async (e: Event) => {
 
 		const xsrfToken = xsrfTokenRow ? decodeURIComponent(xsrfTokenRow.split('=')[1]) : undefined;
 
-		if (isUpdate) {
+		if (isUpdate.value) {
       const response = await axios.put(`http://localhost:8000/users/${userId.value}`, payload, {
         headers: {
           'X-XSRF-TOKEN': xsrfToken,
@@ -57,7 +57,9 @@ const handleSubmit = async (e: Event) => {
 			)
 
 			if (response.status === 201) {
-				(e.target as HTMLFormElement).reset();
+				// ToDo Replace with toast
+				console.log('User Created Successfuly');
+				(e.target as HTMLFormElement).reset()
 			}
 		}
 
