@@ -43,7 +43,7 @@ const handleSubmit = async (e: Event) => {
       });
 
       if (response.status === 200) {
-				// ToDo: Change to toaster
+				// ToDo Replace with toast
         console.log('User updated successfully', response.data);
       }
 		} else {
@@ -63,6 +63,7 @@ const handleSubmit = async (e: Event) => {
 
 		
   } catch (error) {
+		// ToDo add toast
     console.error(error);
   }
 }
@@ -84,7 +85,32 @@ const handleUpdate = async (id: number) => {
 }
 
 const handleDelete = async (id: number) => {
-	// ToDo Delete user api call
+	try {
+		await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true });
+
+		const xsrfTokenRow = document.cookie
+			.split('; ')
+			.find((row) => row.startsWith('XSRF-TOKEN='));
+
+		const xsrfToken = xsrfTokenRow ? decodeURIComponent(xsrfTokenRow.split('=')[1]) : undefined;
+
+		const response = await axios.delete(`http://localhost:8000/users/${id}`, {
+			headers: {
+				'X-XSRF-TOKEN': xsrfToken,
+			},
+			withCredentials: true,
+		});
+
+		console.log('response: ', response)
+
+		if (response.status === 204) {
+			// ToDo Replace with toast
+			console.log('User Deleted Successfully')
+		}
+	} catch (error) {
+		// ToDo add toast
+		console.error('Failed in deleting user: ', error)
+	}
 }
 
 </script>
