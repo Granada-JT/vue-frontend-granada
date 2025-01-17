@@ -1,31 +1,27 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import axios from 'axios'
 import { useUsersStore } from '@/stores/users'
 
-const roleId = ref(0)
+const fullName = ref<string>('')
+const email = ref<string>('')
+const nominatedPassword = ref<string>('')
+const confirmPassword = ref<string>('')
+const roleId = ref<number>(0)
+const isUpdate = ref<boolean>(false)
 
 const usersStore = useUsersStore()
 
-watch(
-  () => usersStore.users,
-  (newUsers) => {
-    console.log('users updated:', JSON.parse(JSON.stringify(newUsers)))
-  }
-)
-
 const handleSubmit = async (e: Event) => {
   try {
-    const formData = new FormData(e.target as HTMLFormElement);
-    const values = Object.fromEntries(formData.entries());
-		if (values.nominatedPassword !== values.confirmPassword) {
+		if (nominatedPassword.value !== confirmPassword.value) {
       throw new Error('Passwords do not match.');
     }
 
 		const payload = {
-			name: values.fullname,
-			email: values.email,
-			password: values.confirmPassword,
+			name: fullName.value,
+			email: email.value,
+			password: confirmPassword.value,
 			role_id: roleId.value
 		}
 
@@ -55,12 +51,25 @@ const handleSubmit = async (e: Event) => {
   }
 }
 
-const handleUpdate = async (id: number) => {
+const handleUpdate = async (userId: number) => {
 	// ToDo Update user api call
+	const usersArray = usersStore.users
+	if (usersArray) {
+		usersArray.map((user) => {
+			if (userId === user.id) {
+				fullName.value = user.name,
+				email.value = user.email,
+				nominatedPassword.value = user.password,
+				roleId.value = user.role_id
+			}
+		})
+	}
+	isUpdate.value = true
 }
 
-const handleDelete = async (id: number) => {
+const handleDelete = async (userId: number) => {
 	// ToDo Delete user api call
+	alert('delete amp')
 }
 
 </script>
@@ -68,19 +77,20 @@ const handleDelete = async (id: number) => {
 <template>
 	<div class="user-dashboard">
 		<form class="user-form" @submit.prevent="handleSubmit">
-			<h1>Create User</h1>
+			<h1 v-if="!isUpdate">Create User</h1>
+			<h1 v-else="isUpdate">Update User</h1>
 			<div>
 				<div class="input-block">
 					<label>
 						Full Name:
 					</label>
-					<input type="text" name="fullname" />
+					<input type="text" name="fullname" v-model="fullName" />
 				</div>
 				<div class="input-block">
 					<label>
 						Email Address:
 					</label>
-					<input type="email" name="email" />
+					<input type="email" name="email" v-model="email" />
 				</div>
 			</div>
 			<div>
@@ -88,13 +98,13 @@ const handleDelete = async (id: number) => {
 					<label>
 						Password:
 					</label>
-					<input type="password" name="nominatedPassword" />
+					<input type="password" name="nominatedPassword" v-model="nominatedPassword" />
 				</div>
 				<div class="input-block">
 					<label>
 						Confirm Password:
 					</label>
-					<input type="password" name="confirmPassword" />
+					<input type="password" name="confirmPassword" v-model="confirmPassword"/>
 				</div>
 			</div>
 			<div class="input-block">
@@ -103,7 +113,8 @@ const handleDelete = async (id: number) => {
 				</label>
 				<input type="number" name="role" v-model="roleId"/>
 			</div>
-			<button type="submit">Create User</button>
+			<button type="submit" v-if="!isUpdate">Create User</button>
+			<button type="submit" v-else="isUpdate">Update User</button>
 		</form>
     <div class="table">
       <h1>Users</h1>
