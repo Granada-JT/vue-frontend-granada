@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth'
-import { useUsersStore } from '@/stores/users'
+import { useRolesStore } from '@/stores/roles'
 
-const authStore = useAuthStore()
-const usersStore = useUsersStore()
+const rolesStore = useRolesStore()
 
 const handleSubmit = async (e: Event) => {
   try {
@@ -15,19 +13,51 @@ const handleSubmit = async (e: Event) => {
     console.error(error);
   }
 }
+
+const handleDelete = async (roleId: number) => {
+	// ToDo Delete role api call
+}
+
+const handleUpdate = async (roleId: number) => {
+	// Todo Update role api call
+}
 </script>
 
 <template>
 	<div class="roledb-wrapper">
 		<div class="role-dashboard">
-			<h1>Create Role</h1>
 			<form @submit.prevent="handleSubmit">
+				<h1>Create Role</h1>
 				<label>Role Name:</label>
 				<input type="text" name="roleName" />
 				<label>Role Description:</label>
 				<input type="text" name="roleDescription" />
 				<button type="submit">Create role</button>
 			</form>
+			<div class="table">
+      <h1>Roles</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="role in rolesStore.roles" :key="role.id">
+            <td>{{ role.id }}</td>
+            <td>{{ role.name }}</td>
+            <td>{{ role.description }}</td>
+            <td class="actions">
+              <button class="update-btn" @click="handleUpdate(role.id)">Update</button>
+              <button class="delete-btn" @click="handleDelete(role.id)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 		</div>
 	</div>
 </template>
@@ -36,19 +66,24 @@ const handleSubmit = async (e: Event) => {
 	.roledb-wrapper {
 		display: flex;
 		align-items: center;
-		justify-content: center;
+		justify-content: flex-start;
 		flex-direction: column;
-		align-self: flex-end;
 		margin: 0px 12px;
+		text-align: center;
 	}
 
 	.role-dashboard {
-		height: 500px;
 		width: 100%;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: flex-start;
+		gap: 20px
+	}
+
+	.actions {
+		display:flex;
+		flex-direction: row;
 	}
 
 </style>

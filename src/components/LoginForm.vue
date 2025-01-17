@@ -4,15 +4,15 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 import { useUsersStore } from '@/stores/users'
+import { useRolesStore } from '@/stores/roles'
 import LoginItem from './LoginItem.vue'
-import type { User } from '@/types/users'
 
 const password = ref('')
 const email = ref('')
-const users = ref<User[]>([]);
 
 const authStore = useAuthStore()
 const usersStore = useUsersStore()
+const rolesStore = useRolesStore()
 
 const router = useRouter()
 
@@ -21,13 +21,24 @@ const fetchUsers = async () => {
     const usersResponse = await axios.get('http://localhost:8000/users', { withCredentials: true });
 
     if (usersResponse.status === 200) {
-      users.value = usersResponse.data
       usersStore.updateUsers(usersResponse.data)
     }
   } catch (error) {
     console.error('Failed to fetch users:', error);
   }
 };
+
+const fetchRoles = async () => {
+  try {
+    const rolesResponse = await axios.get('http://localhost:8000/roles', { withCredentials: true });
+
+    if (rolesResponse.status === 200) {
+      rolesStore.updateRoles(rolesResponse.data)
+    }
+  } catch (error) {
+    console.error('Failed to fetch roles: ', error)
+  }
+}
 
 const handleSubmit = async () => {
   try {
@@ -70,6 +81,7 @@ const handleSubmit = async () => {
       }
       router.push('/home')
       await fetchUsers();
+      await fetchRoles();
     }
 
   } catch (error) {
