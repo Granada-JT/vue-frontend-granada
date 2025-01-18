@@ -5,7 +5,9 @@ import { useRolesStore } from '@/stores/roles'
 
 const rolesStore = useRolesStore()
 const roleName = ref<string>('')
-const roleDescription = ref<string>('')
+const roleDescription = ref<string | null>('')
+const isUpdate = ref<boolean>(false)
+const roleId = ref<number>(0)
 
 const handleSubmit = async (e: Event) => {
   try {
@@ -22,19 +24,33 @@ const handleSubmit = async (e: Event) => {
 			description: roleDescription.value
 		}
 
-		const response = await axios.post('http://localhost:8000/roles', payload,
-			{
+		if (isUpdate) {
+			const updateResponse = await axios.put(`http://localhost:8000/roles/${roleId.value}`, payload, {
 				headers: {
 					'X-XSRF-TOKEN': xsrfToken,
 				},
-				withCredentials: true,
-			}
-		)
+				withCredentials: true
+			})
 
-		if (response.status === 201) {
-			// ToDo Replace with toast
-			console.log('Role Created Successfuly');
-			(e.target as HTMLFormElement).reset()
+			if (updateResponse.status === 200) {
+				// ToDo: Replace with toast
+				console.log('Role Updated Successfully')
+			}
+		} else {
+			const response = await axios.post('http://localhost:8000/roles', payload,
+				{
+					headers: {
+						'X-XSRF-TOKEN': xsrfToken,
+					},
+					withCredentials: true,
+				}
+			)
+
+			if (response.status === 201) {
+				// ToDo: Replace with toast
+				console.log('Role Created Successfuly');
+				(e.target as HTMLFormElement).reset()
+			}
 		}
 
   } catch (error) {
@@ -42,12 +58,23 @@ const handleSubmit = async (e: Event) => {
   }
 }
 
-const handleDelete = async (roleId: number) => {
+
+const handleDelete = async (id: number) => {
 	// ToDo Delete role api call
 }
 
-const handleUpdate = async (roleId: number) => {
-	// Todo Update role api call
+const handleUpdate = async (id: number) => {
+	isUpdate.value = true
+	roleId.value = id
+	const rolesArray = rolesStore.roles
+	if (rolesArray) {
+		rolesArray.map((role) => {
+			if (id === role.id) {
+				roleName.value = role.name
+				roleDescription.value = role.description
+			}
+		})
+	}
 }
 </script>
 
@@ -55,12 +82,14 @@ const handleUpdate = async (roleId: number) => {
 	<div class="roledb-wrapper">
 		<div class="role-dashboard">
 			<form @submit.prevent="handleSubmit">
-				<h1>Create Role</h1>
+				<h1 v-if="!isUpdate">Create Role</h1>
+				<h1 v-if="isUpdate">Update Role</h1>
 				<label>Role Name:</label>
 				<input type="text" name="roleName" v-model="roleName"/>
 				<label>Role Description:</label>
 				<input type="text" name="roleDescription" v-model="roleDescription" />
-				<button type="submit">Create role</button>
+				<button v-if="!isUpdate" type="submit">Create Role</button>
+				<button v-else="isUpdate" type="submit">Update Role</button>
 			</form>
 			<div class="table">
       <h1>Roles</h1>
