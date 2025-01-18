@@ -105,6 +105,12 @@ const handleUpdate = async (id: number) => {
 		})
 	}
 }
+
+const handleCancel = () => {
+	isUpdate.value = false
+	roleName.value = ''
+	roleDescription.value = ''
+}
 </script>
 
 <template>
@@ -117,8 +123,11 @@ const handleUpdate = async (id: number) => {
 				<input type="text" name="roleName" v-model="roleName"/>
 				<label>Role Description:</label>
 				<textarea type="text" name="roleDescription" v-model="roleDescription"></textarea>
-				<button v-if="!isUpdate" type="submit">Create Role</button>
-				<button v-else="isUpdate" type="submit">Update Role</button>
+				<div class="submit-btns">
+					<button v-if="!isUpdate" type="submit">Create Role</button>
+					<button v-else="isUpdate" type="submit">Update Role</button>
+					<button v-if="isUpdate" @click="handleCancel" class="cancel-btn" type="submit">Cancel</button>
+				</div>
 			</form>
 			<div class="table">
 				<h1>Roles</h1>
@@ -177,6 +186,19 @@ const handleUpdate = async (id: number) => {
 		width: 400px;
 		border-radius: 5px;
 		resize: none;
+	}
+
+	.submit-btns {
+		display: flex;
+		gap: 20px;
+	}
+
+	.cancel-btn {
+		background-color: #9b1e1e;
+	}
+
+	.cancel-btn:hover {
+		background-color: rgb(233, 43, 43);
 	}
 
 	.actions {
