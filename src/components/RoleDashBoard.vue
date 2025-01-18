@@ -202,6 +202,10 @@ const handleCancel = () => {
 		background-color: rgb(233, 43, 43);
 	}
 
+	.table > h1 {
+		margin: 20px 0;
+	}
+
 	.actions {
 		display:flex;
 		flex-direction: row;
