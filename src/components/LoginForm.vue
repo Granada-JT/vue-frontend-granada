@@ -16,18 +16,6 @@ const rolesStore = useRolesStore()
 
 const router = useRouter()
 
-const fetchUsers = async () => {
-  try {
-    const usersResponse = await axios.get('http://localhost:8000/users', { withCredentials: true });
-
-    if (usersResponse.status === 200) {
-      usersStore.updateUsers(usersResponse.data)
-    }
-  } catch (error) {
-    console.error('Failed to fetch users:', error);
-  }
-};
-
 const fetchRoles = async () => {
   try {
     const rolesResponse = await axios.get('http://localhost:8000/roles', { withCredentials: true });
@@ -80,7 +68,7 @@ const handleSubmit = async () => {
         authStore.updateLoggedInUser(getUserByEmailResponse.data)
       }
       router.push('/home')
-      await fetchUsers();
+      await usersStore.fetchUsers();
       await fetchRoles();
     }
 
