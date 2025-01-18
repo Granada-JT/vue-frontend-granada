@@ -44,9 +44,13 @@ const handleSubmit = async (e: Event) => {
 
       if (response.status === 200) {
 				// ToDo Replace with toast
-				usersStore.fetchUsers();
-				isUpdate.value = false;
-				(e.target as HTMLFormElement).reset()
+				usersStore.fetchUsers()
+				isUpdate.value = false
+				fullName.value = ''
+				email.value = ''
+				nominatedPassword.value = ''
+				confirmPassword.value = ''
+				roleId.value = 0
         console.log('User updated successfully', response.data)
       }
 		} else {
@@ -62,8 +66,12 @@ const handleSubmit = async (e: Event) => {
 			if (response.status === 201) {
 				// ToDo Replace with toast
 				usersStore.fetchUsers()
-				console.log('User Created Successfuly');
-				(e.target as HTMLFormElement).reset()
+				console.log('User Created Successfuly')
+				fullName.value = ''
+				email.value = ''
+				nominatedPassword.value = ''
+				confirmPassword.value = ''
+				roleId.value = 0
 			}
 		}
 
