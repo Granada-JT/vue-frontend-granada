@@ -45,6 +45,7 @@ const handleSubmit = async (e: Event) => {
       if (response.status === 200) {
 				// ToDo Replace with toast
 				usersStore.fetchUsers();
+				isUpdate.value = false;
 				(e.target as HTMLFormElement).reset()
         console.log('User updated successfully', response.data)
       }

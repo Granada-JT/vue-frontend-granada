@@ -35,6 +35,7 @@ const handleSubmit = async (e: Event) => {
 			if (updateResponse.status === 200) {
 				rolesStore.fetchRoles();
 				(e.target as HTMLFormElement).reset()
+				isUpdate.value = false
 				// ToDo: Replace with toast
 				console.log('Role Updated Successfully')
 			}
