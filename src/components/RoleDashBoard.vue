@@ -33,6 +33,8 @@ const handleSubmit = async (e: Event) => {
 			})
 
 			if (updateResponse.status === 200) {
+				rolesStore.fetchRoles();
+				(e.target as HTMLFormElement).reset()
 				// ToDo: Replace with toast
 				console.log('Role Updated Successfully')
 			}
@@ -47,6 +49,7 @@ const handleSubmit = async (e: Event) => {
 			)
 
 			if (response.status === 201) {
+				rolesStore.fetchRoles();
 				// ToDo: Replace with toast
 				console.log('Role Created Successfuly');
 				(e.target as HTMLFormElement).reset()
@@ -76,6 +79,7 @@ const handleDelete = async (id: number) => {
 		});
 
 		if (response.status === 204) {
+			rolesStore.fetchRoles();
 			// ToDo Replace with toast
 			console.log('Role Deleted Successfully')
 		}
