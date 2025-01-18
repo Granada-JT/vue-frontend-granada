@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import axios from 'axios'
 import { defineStore } from 'pinia'
 import type { Role } from '@/types/users'
 
@@ -14,9 +15,21 @@ export const useRolesStore = defineStore('roles', () => {
     }
 	]);
 
-	function updateRoles(updatedRoles: Role[] | null) {
+	const updateRoles = (updatedRoles: Role[] | null) => {
 		roles.value = updatedRoles
 	}
 
-	return { roles, updateRoles }
+	const fetchRoles = async () => {
+		try {
+			const rolesResponse = await axios.get('http://localhost:8000/roles', { withCredentials: true });
+	
+			if (rolesResponse.status === 200) {
+				roles.value = rolesResponse.data
+			}
+		} catch (error) {
+			console.error('Failed to fetch roles: ', error)
+		}
+	}
+
+	return { roles, updateRoles, fetchRoles }
 })

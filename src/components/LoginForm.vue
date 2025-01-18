@@ -16,18 +16,6 @@ const rolesStore = useRolesStore()
 
 const router = useRouter()
 
-const fetchRoles = async () => {
-  try {
-    const rolesResponse = await axios.get('http://localhost:8000/roles', { withCredentials: true });
-
-    if (rolesResponse.status === 200) {
-      rolesStore.updateRoles(rolesResponse.data)
-    }
-  } catch (error) {
-    console.error('Failed to fetch roles: ', error)
-  }
-}
-
 const handleSubmit = async () => {
   try {
     await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true });
@@ -69,7 +57,7 @@ const handleSubmit = async () => {
       }
       router.push('/home')
       await usersStore.fetchUsers();
-      await fetchRoles();
+      await rolesStore.fetchRoles();
     }
 
   } catch (error) {
