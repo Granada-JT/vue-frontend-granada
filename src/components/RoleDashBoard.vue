@@ -58,9 +58,31 @@ const handleSubmit = async (e: Event) => {
   }
 }
 
-
 const handleDelete = async (id: number) => {
-	// ToDo Delete role api call
+	try {
+		await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true });
+
+		const xsrfTokenRow = document.cookie
+			.split('; ')
+			.find((row) => row.startsWith('XSRF-TOKEN='));
+
+		const xsrfToken = xsrfTokenRow ? decodeURIComponent(xsrfTokenRow.split('=')[1]) : undefined;
+
+		const response = await axios.delete(`http://localhost:8000/roles/${id}`, {
+			headers: {
+				'X-XSRF-TOKEN': xsrfToken,
+			},
+			withCredentials: true,
+		});
+
+		if (response.status === 204) {
+			// ToDo Replace with toast
+			console.log('Role Deleted Successfully')
+		}
+	} catch (error) {
+		// ToDo add toast
+		console.error('Failed in deleting role: ', error)
+	}
 }
 
 const handleUpdate = async (id: number) => {
