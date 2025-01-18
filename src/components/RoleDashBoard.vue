@@ -186,6 +186,7 @@ const handleCancel = () => {
 		width: 400px;
 		border-radius: 5px;
 		resize: none;
+		padding: 10px;
 	}
 
 	.submit-btns {
