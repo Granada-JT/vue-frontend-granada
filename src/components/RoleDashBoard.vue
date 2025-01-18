@@ -116,34 +116,34 @@ const handleUpdate = async (id: number) => {
 				<label>Role Name:</label>
 				<input type="text" name="roleName" v-model="roleName"/>
 				<label>Role Description:</label>
-				<input type="text" name="roleDescription" v-model="roleDescription" />
+				<textarea type="text" name="roleDescription" v-model="roleDescription"></textarea>
 				<button v-if="!isUpdate" type="submit">Create Role</button>
 				<button v-else="isUpdate" type="submit">Update Role</button>
 			</form>
 			<div class="table">
-      <h1>Roles</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="role in rolesStore.roles" :key="role.id">
-            <td>{{ role.id }}</td>
-            <td>{{ role.name }}</td>
-            <td>{{ role.description }}</td>
-            <td class="actions">
-              <button class="update-btn" @click="handleUpdate(role.id)">Update</button>
-              <button class="delete-btn" @click="handleDelete(role.id)">Delete</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+				<h1>Roles</h1>
+				<table>
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Name</th>
+							<th>Description</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="role in rolesStore.roles" :key="role.id">
+							<td>{{ role.id }}</td>
+							<td>{{ role.name }}</td>
+							<td>{{ role.description }}</td>
+							<td class="actions">
+								<button class="update-btn" @click="handleUpdate(role.id)">Update</button>
+								<button class="delete-btn" @click="handleDelete(role.id)">Delete</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 </template>
@@ -154,7 +154,7 @@ const handleUpdate = async (id: number) => {
 		align-items: center;
 		justify-content: flex-start;
 		flex-direction: column;
-		margin: 0px 12px;
+		margin: 20px 12px 0px 12px;
 		text-align: center;
 	}
 
@@ -165,6 +165,18 @@ const handleUpdate = async (id: number) => {
 		align-items: center;
 		justify-content: flex-start;
 		gap: 20px
+	}
+
+	.role-dashboard input {
+		align-self: flex-start;
+		width: 400px;
+	}
+
+	.role-dashboard textarea {
+		height: 110px;
+		width: 400px;
+		border-radius: 5px;
+		resize: none;
 	}
 
 	.actions {
