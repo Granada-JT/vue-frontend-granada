@@ -103,8 +103,6 @@ const handleDelete = async (id: number) => {
 			withCredentials: true,
 		});
 
-		console.log('response: ', response)
-
 		if (response.status === 204) {
 			// ToDo Replace with toast
 			console.log('User Deleted Successfully')
