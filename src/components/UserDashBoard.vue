@@ -232,6 +232,7 @@ const handleDelete = async (id: number) => {
     border-radius: 5px;
     box-shadow: none;
     border: none;
+		padding: 10px;
   }
 
 	label {
