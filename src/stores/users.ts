@@ -1,6 +1,7 @@
 import { ref } from 'vue'
+import axios from 'axios'
 import { defineStore } from 'pinia'
-import type { User, Role } from '@/types/users'
+import type { User } from '@/types/users'
 
 export const useUsersStore = defineStore('users', () => {
 	
@@ -23,9 +24,21 @@ export const useUsersStore = defineStore('users', () => {
 		},
 	]);
 
-	function updateUsers(updatedUsers: User[] | null) {
+	const updateUsers = (updatedUsers: User[] | null) => {
 		users.value = updatedUsers
 	}
 
-	return { users, updateUsers }
+	const fetchUsers = async () => {
+		try {
+			const usersResponse = await axios.get('http://localhost:8000/users', { withCredentials: true });
+	
+			if (usersResponse.status === 200) {
+				users.value = usersResponse.data
+			}
+		} catch (error) {
+			console.error('Failed to fetch users:', error);
+		}
+	}
+
+	return { users, updateUsers, fetchUsers }
 })
