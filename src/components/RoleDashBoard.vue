@@ -34,7 +34,8 @@ const handleSubmit = async (e: Event) => {
 
 			if (updateResponse.status === 200) {
 				rolesStore.fetchRoles();
-				(e.target as HTMLFormElement).reset()
+				roleName.value = ''
+				roleDescription.value = ''
 				isUpdate.value = false
 				// ToDo: Replace with toast
 				console.log('Role Updated Successfully')
@@ -51,9 +52,10 @@ const handleSubmit = async (e: Event) => {
 
 			if (response.status === 201) {
 				rolesStore.fetchRoles();
+				roleName.value = ''
+				roleDescription.value = ''
 				// ToDo: Replace with toast
-				console.log('Role Created Successfuly');
-				(e.target as HTMLFormElement).reset()
+				console.log('Role Created Successfuly')
 			}
 		}
 
