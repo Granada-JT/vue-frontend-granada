@@ -16,7 +16,7 @@ const usersStore = useUsersStore()
 const handleSubmit = async (e: Event) => {
   try {
 		if (nominatedPassword.value !== confirmPassword.value) {
-      throw new Error('Passwords do not match.');
+      throw new Error('Passwords do not match.')
     }
 
 		const payload = {
@@ -26,13 +26,13 @@ const handleSubmit = async (e: Event) => {
 			role_id: roleId.value
 		}
 
-		await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true });
+		await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true })
 
 		const xsrfTokenRow = document.cookie
 			.split('; ')
 			.find((row) => row.startsWith('XSRF-TOKEN='));
 
-		const xsrfToken = xsrfTokenRow ? decodeURIComponent(xsrfTokenRow.split('=')[1]) : undefined;
+		const xsrfToken = xsrfTokenRow ? decodeURIComponent(xsrfTokenRow.split('=')[1]) : undefined
 
 		if (isUpdate.value) {
       const response = await axios.put(`http://localhost:8000/users/${userId.value}`, payload, {
@@ -40,11 +40,13 @@ const handleSubmit = async (e: Event) => {
           'X-XSRF-TOKEN': xsrfToken,
         },
         withCredentials: true,
-      });
+      })
 
       if (response.status === 200) {
 				// ToDo Replace with toast
-        console.log('User updated successfully', response.data);
+				usersStore.fetchUsers();
+				(e.target as HTMLFormElement).reset()
+        console.log('User updated successfully', response.data)
       }
 		} else {
 			const response = await axios.post('http://localhost:8000/users', payload,
@@ -58,6 +60,7 @@ const handleSubmit = async (e: Event) => {
 
 			if (response.status === 201) {
 				// ToDo Replace with toast
+				usersStore.fetchUsers()
 				console.log('User Created Successfuly');
 				(e.target as HTMLFormElement).reset()
 			}
@@ -105,6 +108,7 @@ const handleDelete = async (id: number) => {
 
 		if (response.status === 204) {
 			// ToDo Replace with toast
+			usersStore.fetchUsers()
 			console.log('User Deleted Successfully')
 		}
 	} catch (error) {
