@@ -229,7 +229,7 @@ const handleDelete = async (id: number) => {
 
 	input {
     height: 30px;
-    border-radius: 5px;;
+    border-radius: 5px;
     box-shadow: none;
     border: none;
   }
