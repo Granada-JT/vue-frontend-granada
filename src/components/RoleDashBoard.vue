@@ -24,7 +24,7 @@ const handleSubmit = async (e: Event) => {
 			description: roleDescription.value
 		}
 
-		if (isUpdate) {
+		if (isUpdate.value) {
 			const updateResponse = await axios.put(`http://localhost:8000/roles/${roleId.value}`, payload, {
 				headers: {
 					'X-XSRF-TOKEN': xsrfToken,
