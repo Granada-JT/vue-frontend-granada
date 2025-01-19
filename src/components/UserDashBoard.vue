@@ -89,6 +89,13 @@ const handleSubmit = async () => {
 		const xsrfToken = xsrfTokenRow ? decodeURIComponent(xsrfTokenRow.split('=')[1]) : undefined
 
 		if (isUpdate.value) {
+			toast.clear()
+			toast.info('Updating User', {
+				position: 'top',
+				dismissible: false,
+				duration: 86400000
+			})
+
       const response = await axios.put(`http://localhost:8000/users/${userId.value}`, payload, {
         headers: {
           'X-XSRF-TOKEN': xsrfToken,
@@ -104,12 +111,20 @@ const handleSubmit = async () => {
 				nominatedPassword.value = ''
 				confirmPassword.value = ''
 				roleId.value = 0
+				toast.clear()
 				toast.success('User Updated Successfully', {
 					position: 'top',
 					duration: 3000
 				})
       }
 		} else {
+			toast.clear()
+			toast.info('Creating User', {
+				position: 'top',
+				dismissible: false,
+				duration: 86400000
+			})
+
 			const response = await axios.post('http://localhost:8000/users', payload,
 				{
 					headers: {
@@ -126,6 +141,7 @@ const handleSubmit = async () => {
 				nominatedPassword.value = ''
 				confirmPassword.value = ''
 				roleId.value = 0
+				toast.clear()
 				toast.success('User Created Successfully', {
 					position: 'top',
 					duration: 3000
@@ -136,12 +152,14 @@ const handleSubmit = async () => {
   } catch (error) {
 		if (isUpdate.value) {
 			console.error('Failed Updating User: ', error)
+			toast.clear()
 			toast.error('Failed Updating User', {
 				position: 'top',
 				duration: 3000
 			})
 		} else {
 			console.error('Failed Creating User: ', error)
+			toast.clear()
 			toast.error('Failed Creating User', {
 				position: 'top',
 				duration: 3000
@@ -160,7 +178,8 @@ const handleUpdate = async (id: number) => {
 				fullName.value = user.name,
 				email.value = user.email,
 				nominatedPassword.value = user.password,
-				roleId.value = user.role_id
+				roleId.value = user.role_id,
+				confirmPassword.value = ''
 			}
 		})
 	}
@@ -168,6 +187,13 @@ const handleUpdate = async (id: number) => {
 
 const handleDelete = async (id: number) => {
 	try {
+		toast.clear()
+		toast.info('Deleting Role', {
+			position: 'top',
+			dismissible: false,
+			duration: 86400000
+		})
+
 		await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true });
 
 		const xsrfTokenRow = document.cookie
@@ -185,6 +211,7 @@ const handleDelete = async (id: number) => {
 
 		if (response.status === 204) {
 			usersStore.fetchUsers()
+			toast.clear()
 			toast.success('User Deleted Successfully', {
 				position: 'top',
 				duration: 3000
@@ -192,6 +219,7 @@ const handleDelete = async (id: number) => {
 		}
 	} catch (error) {
 		console.error('Failed Deleting User: ', error)
+		toast.clear()
 		toast.error('Failed Deleting User', {
 			position: 'top',
 			duration: 3000
