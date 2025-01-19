@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toast-notification'
 import axios, { AxiosError } from 'axios'
 import { useAuthStore } from '@/stores/auth'
@@ -15,7 +14,6 @@ const authStore = useAuthStore()
 const usersStore = useUsersStore()
 const rolesStore = useRolesStore()
 
-const router = useRouter()
 const toast = useToast()
 
 const errors = ref({
@@ -97,7 +95,6 @@ const handleSubmit = async () => {
       if (getUserByEmailResponse.status === 200) {
         authStore.updateLoggedInUser(getUserByEmailResponse.data)
       }
-      router.push('/home')
       await usersStore.fetchUsers();
       await rolesStore.fetchRoles();
     }

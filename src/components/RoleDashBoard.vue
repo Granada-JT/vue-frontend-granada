@@ -213,7 +213,7 @@ const handleCancel = () => {
 				<span class="error" v-if="errors.roleDescription">{{ errors.roleDescription }}</span>
 				<div class="submit-btns">
 					<button v-if="!isUpdate" type="submit">Create Role</button>
-					<button v-else="isUpdate" type="submit" class="update-btn">Update Role</button>
+					<button v-else type="submit" class="update-btn">Update Role</button>
 					<button v-if="isUpdate" @click="handleCancel" class="cancel-btn" type="submit">Cancel</button>
 				</div>
 			</form>
