@@ -14,7 +14,7 @@ export const useUsersStore = defineStore('users', () => {
 			role: {
 				id: 0,
 				name: '',
-				description: null,
+				description: '',
 				created_at: '',
 				updated_at: '',
 			},
