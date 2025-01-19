@@ -2,7 +2,9 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import { useRolesStore } from '@/stores/roles'
+import { useToast } from 'vue-toast-notification'
 
+const toast = useToast()
 const rolesStore = useRolesStore()
 const roleName = ref<string>('')
 const roleDescription = ref<string | null>('')
@@ -37,8 +39,10 @@ const handleSubmit = async (e: Event) => {
 				roleName.value = ''
 				roleDescription.value = ''
 				isUpdate.value = false
-				// ToDo: Replace with toast
-				console.log('Role Updated Successfully')
+				toast.success('Role Updated Successfully', {
+					position: 'top',
+					duration: 3000
+				})
 			}
 		} else {
 			const response = await axios.post('http://localhost:8000/roles', payload,
@@ -54,13 +58,27 @@ const handleSubmit = async (e: Event) => {
 				rolesStore.fetchRoles();
 				roleName.value = ''
 				roleDescription.value = ''
-				// ToDo: Replace with toast
-				console.log('Role Created Successfuly')
+				toast.success('Role Created Successfully', {
+					position: 'top',
+					duration: 3000
+				})
 			}
 		}
 
   } catch (error) {
-    console.error(error);
+		if (isUpdate.value) {
+			console.error('Failed Updating Role: ', error)
+			toast.error('Failed Updating Role', {
+				position: 'top',
+				duration: 3000
+			})
+		} else {
+			console.error('Failed Creating Role: ', error)
+			toast.error('Failed Ceating Role', {
+				position: 'top',
+				duration: 3000
+			})
+		}
   }
 }
 
@@ -79,16 +97,21 @@ const handleDelete = async (id: number) => {
 				'X-XSRF-TOKEN': xsrfToken,
 			},
 			withCredentials: true,
-		});
+		})
 
 		if (response.status === 204) {
 			rolesStore.fetchRoles();
-			// ToDo Replace with toast
-			console.log('Role Deleted Successfully')
+			toast.success('Role Deleted Successfully', {
+				position: 'top',
+				duration: 3000
+			})
 		}
 	} catch (error) {
-		// ToDo add toast
 		console.error('Failed in deleting role: ', error)
+		toast.error('Failed Deleting Role', {
+			position: 'top',
+			duration: 3000
+		})
 	}
 }
 
@@ -176,6 +199,14 @@ const handleCancel = () => {
 		gap: 20px
 	}
 
+	.v-toast__item--success {
+		background-color: hsla(160, 100%, 37%, 1);
+	}
+
+	.v-toast__item--error {
+		background-color: #9b1e1e;
+	}
+
 	.role-dashboard input {
 		align-self: flex-start;
 		width: 400px;
@@ -187,6 +218,11 @@ const handleCancel = () => {
 		border-radius: 5px;
 		resize: none;
 		padding: 10px;
+		font-family: inherit;
+	}
+
+	.role-dashboard .table {
+		max-height: 408px;
 	}
 
 	.submit-btns {
