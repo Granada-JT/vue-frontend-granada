@@ -207,6 +207,10 @@ const handleCancel = () => {
 		background-color: #9b1e1e;
 	}
 
+	.v-toast__item--info {
+		background-color: #3974a1;
+	}
+
 	.role-dashboard input {
 		align-self: flex-start;
 		width: 400px;
