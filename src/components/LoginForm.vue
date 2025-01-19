@@ -9,11 +9,9 @@ import LoginItem from './LoginItem.vue'
 
 const password = ref('')
 const email = ref('')
-
 const authStore = useAuthStore()
 const usersStore = useUsersStore()
 const rolesStore = useRolesStore()
-
 const router = useRouter()
 
 const handleSubmit = async () => {
