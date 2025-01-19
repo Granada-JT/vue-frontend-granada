@@ -62,7 +62,9 @@ const handleSubmit = async () => {
         position: 'top',
         duration: 3000
       })
+
       authStore.login()
+
       if (getUserByEmailResponse.status === 200) {
         authStore.updateLoggedInUser(getUserByEmailResponse.data)
       }
@@ -81,15 +83,39 @@ const handleSubmit = async () => {
         dismissible: true,
         duration: 30000
       })
+      
     } else {
       toast.error('Failed to Login', {
         position: 'top',
         duration: 3000
       })
+
       console.error('Failed to Login:', error)
     }
   }
-};
+}
+
+const handleLogout = () => {
+  try {
+    toast.clear()
+    toast.info('Logging Out', {
+      position: 'top',
+      dismissible: false
+    })
+
+    authStore.logout()
+    usersStore.updateUsers(null)
+
+    toast.clear()
+    toast.success('Logged Out Successfully', {
+      position: 'top',
+      duration: 3000
+    })
+
+  } catch (error) {
+    console.error('Failed to Logout: ', error)
+  }
+}
 
 </script>
 <style>
@@ -155,7 +181,7 @@ const handleSubmit = async () => {
     <button
       class="logout"
       v-if="authStore.isLoggedIn"
-      @click="authStore.logout(), usersStore.updateUsers(null)"
+      @click="handleLogout"
     >
       Logout
     </button>
