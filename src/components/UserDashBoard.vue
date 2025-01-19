@@ -15,7 +15,58 @@ const toast = useToast()
 
 const usersStore = useUsersStore()
 
-const handleSubmit = async (e: Event) => {
+const errors = ref({
+  fullName: '',
+  email: '',
+  nominatedPassword: '',
+  confirmPassword: '',
+  roleId: '',
+})
+
+const validateForm = (): boolean => {
+  let isValid = true
+  errors.value = {
+    fullName: '',
+    email: '',
+    nominatedPassword: '',
+    confirmPassword: '',
+    roleId: '',
+  }
+
+  if (!fullName.value.trim()) {
+    errors.value.fullName = 'Full name is required'
+    isValid = false
+  }
+  if (!email.value.trim()) {
+    errors.value.email = 'Email is required.'
+    isValid = false
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+    errors.value.email = 'Invalid email address'
+    isValid = false
+  }
+  if (!nominatedPassword.value.trim()) {
+    errors.value.nominatedPassword = 'Password is required'
+    isValid = false
+  }
+	if (nominatedPassword.value.trim() && nominatedPassword.value.length < 8) {
+		errors.value.nominatedPassword = 'Min. of 8 characters required'
+    isValid = false
+	}
+  if (nominatedPassword.value !== confirmPassword.value) {
+    errors.value.confirmPassword = 'Passwords do not match'
+    isValid = false
+  }
+  if (!roleId.value || roleId.value <= 0) {
+    errors.value.roleId = 'Invalid role id'
+    isValid = false
+  }
+
+  return isValid
+}
+
+const handleSubmit = async () => {
+	if (!validateForm()) return
+
   try {
 		if (nominatedPassword.value !== confirmPassword.value) {
       throw new Error('Passwords do not match.')
@@ -168,12 +219,14 @@ const handleCancel = () => {
 						Full Name:
 					</label>
 					<input type="text" name="fullname" v-model="fullName" />
+					<span class="error" v-if="errors.fullName">{{ errors.fullName }}</span>
 				</div>
 				<div class="input-block">
 					<label>
 						Email Address:
 					</label>
 					<input type="email" name="email" v-model="email" />
+					<span class="error" v-if="errors.email">{{ errors.email }}</span>
 				</div>
 			</div>
 			<div>
@@ -182,12 +235,14 @@ const handleCancel = () => {
 						Password:
 					</label>
 					<input type="password" name="nominatedPassword" v-model="nominatedPassword" />
+					<span class="error" v-if="errors.nominatedPassword">{{ errors.nominatedPassword }}</span>
 				</div>
 				<div class="input-block">
 					<label>
 						Confirm Password:
 					</label>
 					<input type="password" name="confirmPassword" v-model="confirmPassword"/>
+					<span class="error" v-if="errors.confirmPassword">{{ errors.confirmPassword }}</span>
 				</div>
 			</div>
 			<div class="input-block">
@@ -195,6 +250,7 @@ const handleCancel = () => {
 					Assign Role:
 				</label>
 				<input type="number" name="role" v-model="roleId"/>
+				<span class="error" v-if="errors.roleId">{{ errors.roleId }}</span>
 			</div>
 			<div class="sumbmit-btns">
 				<button type="submit" v-if="!isUpdate">Create User</button>
@@ -241,6 +297,10 @@ const handleCancel = () => {
 		margin-top: 20px;
 		gap: 20px;
 		text-align: center;
+	}
+
+	.error {
+		color: #fa6565;
 	}
 
 	.user-form {
