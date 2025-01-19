@@ -49,7 +49,8 @@ const handleSubmit = async () => {
     toast.clear()
     toast.info('Logging In', {
       position: 'top',
-      dismissible: false
+      dismissible: false,
+      duration: 86400000
     })
 
     await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true })
@@ -128,7 +129,8 @@ const handleLogout = () => {
     toast.clear()
     toast.info('Logging Out', {
       position: 'top',
-      dismissible: false
+      dismissible: false,
+      duration: 86400000
     })
 
     authStore.logout()

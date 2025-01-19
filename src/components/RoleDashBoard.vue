@@ -54,6 +54,13 @@ const handleSubmit = async () => {
 		}
 
 		if (isUpdate.value) {
+			toast.clear()
+			toast.info('Updating Role', {
+				position: 'top',
+				dismissible: false,
+				duration: 86400000
+			})
+
 			const updateResponse = await axios.put(`http://localhost:8000/roles/${roleId.value}`, payload, {
 				headers: {
 					'X-XSRF-TOKEN': xsrfToken,
@@ -66,12 +73,20 @@ const handleSubmit = async () => {
 				roleName.value = ''
 				roleDescription.value = ''
 				isUpdate.value = false
+				toast.clear()
 				toast.success('Role Updated Successfully', {
 					position: 'top',
 					duration: 3000
 				})
 			}
 		} else {
+			toast.clear()
+			toast.info('Creating Role', {
+				position: 'top',
+				dismissible: false,
+				duration: 86400000
+			})
+
 			const response = await axios.post('http://localhost:8000/roles', payload,
 				{
 					headers: {
@@ -85,6 +100,7 @@ const handleSubmit = async () => {
 				rolesStore.fetchRoles();
 				roleName.value = ''
 				roleDescription.value = ''
+				toast.clear()
 				toast.success('Role Created Successfully', {
 					position: 'top',
 					duration: 3000
@@ -95,12 +111,14 @@ const handleSubmit = async () => {
   } catch (error) {
 		if (isUpdate.value) {
 			console.error('Failed Updating Role: ', error)
+			toast.clear()
 			toast.error('Failed Updating Role', {
 				position: 'top',
 				duration: 3000
 			})
 		} else {
 			console.error('Failed Creating Role: ', error)
+			toast.clear()
 			toast.error('Failed Ceating Role', {
 				position: 'top',
 				duration: 3000
@@ -111,6 +129,12 @@ const handleSubmit = async () => {
 
 const handleDelete = async (id: number) => {
 	try {
+		toast.clear()
+		toast.info('Deleting Role', {
+			position: 'top',
+			dismissible: false,
+			duration: 86400000
+		})
 		await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true });
 
 		const xsrfTokenRow = document.cookie
@@ -128,6 +152,7 @@ const handleDelete = async (id: number) => {
 
 		if (response.status === 204) {
 			rolesStore.fetchRoles();
+			toast.clear()
 			toast.success('Role Deleted Successfully', {
 				position: 'top',
 				duration: 3000
@@ -135,6 +160,7 @@ const handleDelete = async (id: number) => {
 		}
 	} catch (error) {
 		console.error('Failed Deleting Role: ', error)
+		toast.clear()
 		toast.error('Failed Deleting Role', {
 			position: 'top',
 			duration: 3000
