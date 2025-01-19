@@ -204,7 +204,7 @@ const handleUpdate = async (id: number) => {
 const handleDelete = async (id: number) => {
 	try {
 		toast.clear()
-		toast.info('Deleting Role', {
+		toast.info('Deleting User', {
 			position: 'top',
 			dismissible: false,
 			duration: 86400000
