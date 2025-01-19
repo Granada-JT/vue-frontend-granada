@@ -246,12 +246,11 @@ const handleDelete = async (id: number) => {
 	}
 
 	.logout {
-		background-color: brown;
+		background-color: #9b1e1e;
 	}
 
 	.logout:hover {
-		background-color: rgb(233, 43, 43);
-	}
+		background-color: #7a1515;	}
 
 	table {
 		width: 100%;
@@ -279,15 +278,19 @@ const handleDelete = async (id: number) => {
     cursor: pointer;
   }
 
-  .table button:hover {
-    background-color: #000000;
-  }
-
 	.delete-btn {
 		background-color: #9b1e1e;
 	}
 
+	.delete-btn:hover {
+		background-color: #7a1515;
+	}
+
 	.update-btn {
 		background-color: #3974a1;
+	}
+
+	.update-btn:hover {
+		background-color: #2f6681; /* a slightly darker shade of #3974a1 */
 	}
 </style>

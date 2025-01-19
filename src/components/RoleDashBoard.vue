@@ -148,7 +148,7 @@ const handleCancel = () => {
 				<textarea type="text" name="roleDescription" v-model="roleDescription"></textarea>
 				<div class="submit-btns">
 					<button v-if="!isUpdate" type="submit">Create Role</button>
-					<button v-else="isUpdate" type="submit">Update Role</button>
+					<button v-else="isUpdate" type="submit" class="update-btn">Update Role</button>
 					<button v-if="isUpdate" @click="handleCancel" class="cancel-btn" type="submit">Cancel</button>
 				</div>
 			</form>
@@ -235,7 +235,7 @@ const handleCancel = () => {
 	}
 
 	.cancel-btn:hover {
-		background-color: rgb(233, 43, 43);
+		background-color: #7a1515;
 	}
 
 	.table > h1 {
