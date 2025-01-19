@@ -107,7 +107,7 @@ const handleDelete = async (id: number) => {
 			})
 		}
 	} catch (error) {
-		console.error('Failed in deleting role: ', error)
+		console.error('Failed Deleting Role: ', error)
 		toast.error('Failed Deleting Role', {
 			position: 'top',
 			duration: 3000

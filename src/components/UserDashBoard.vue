@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import { useUsersStore } from '@/stores/users'
+import { useToast } from 'vue-toast-notification'
 
 const fullName = ref<string>('')
 const email = ref<string>('')
@@ -10,6 +11,7 @@ const confirmPassword = ref<string>('')
 const roleId = ref<number>(0)
 const isUpdate = ref<boolean>(false)
 const userId = ref<number>(0)
+const toast = useToast()
 
 const usersStore = useUsersStore()
 
@@ -43,7 +45,6 @@ const handleSubmit = async (e: Event) => {
       })
 
       if (response.status === 200) {
-				// ToDo Replace with toast
 				usersStore.fetchUsers()
 				isUpdate.value = false
 				fullName.value = ''
@@ -51,7 +52,10 @@ const handleSubmit = async (e: Event) => {
 				nominatedPassword.value = ''
 				confirmPassword.value = ''
 				roleId.value = 0
-        console.log('User updated successfully', response.data)
+				toast.success('User Updated Successfully', {
+					position: 'top',
+					duration: 3000
+				})
       }
 		} else {
 			const response = await axios.post('http://localhost:8000/users', payload,
@@ -64,21 +68,33 @@ const handleSubmit = async (e: Event) => {
 			)
 
 			if (response.status === 201) {
-				// ToDo Replace with toast
 				usersStore.fetchUsers()
-				console.log('User Created Successfuly')
 				fullName.value = ''
 				email.value = ''
 				nominatedPassword.value = ''
 				confirmPassword.value = ''
 				roleId.value = 0
+				toast.success('User Created Successfully', {
+					position: 'top',
+					duration: 3000
+				})
 			}
 		}
 
-		
   } catch (error) {
-		// ToDo add toast
-    console.error(error);
+		if (isUpdate.value) {
+			console.error('Failed Updating User: ', error)
+			toast.error('Failed Updating User', {
+				position: 'top',
+				duration: 3000
+			})
+		} else {
+			console.error('Failed Creating User: ', error)
+			toast.error('Failed Creating User', {
+				position: 'top',
+				duration: 3000
+			})
+		}
   }
 }
 
@@ -116,13 +132,18 @@ const handleDelete = async (id: number) => {
 		});
 
 		if (response.status === 204) {
-			// ToDo Replace with toast
 			usersStore.fetchUsers()
-			console.log('User Deleted Successfully')
+			toast.success('User Deleted Successfully', {
+				position: 'top',
+				duration: 3000
+			})
 		}
 	} catch (error) {
-		// ToDo add toast
-		console.error('Failed in deleting user: ', error)
+		console.error('Failed Deleting User: ', error)
+		toast.error('Failed Deleting User', {
+			position: 'top',
+			duration: 3000
+		})
 	}
 }
 
