@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { useUsersStore } from '@/stores/users'
 import { useToast } from 'vue-toast-notification'
 
@@ -160,7 +160,23 @@ const handleSubmit = async () => {
 		} else {
 			console.error('Failed Creating User: ', error)
 			toast.clear()
-			toast.error('Failed Creating User', {
+			const axiosError = error as AxiosError
+			let errorMsg = ''
+
+			if (axiosError.response && axiosError.response.data) {
+				const responseData = axiosError.response.data as { message?: string };
+				if (responseData.message?.includes('name')) {
+					errorMsg = 'Name already exists';
+				}
+				if (responseData.message?.includes('email')) {
+					errorMsg = 'Email already exists';
+				}
+				if (responseData.message?.includes('role')) {
+					errorMsg = 'Invalid role id';
+				}
+			}
+
+			toast.error(`Failed Creating User: ${errorMsg}`, {
 				position: 'top',
 				duration: 3000
 			})

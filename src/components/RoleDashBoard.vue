@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { useRolesStore } from '@/stores/roles'
 import { useToast } from 'vue-toast-notification'
 
@@ -119,7 +119,17 @@ const handleSubmit = async () => {
 		} else {
 			console.error('Failed Creating Role: ', error)
 			toast.clear()
-			toast.error('Failed Ceating Role', {
+			const axiosError = error as AxiosError
+			let errorMsg = ''
+
+			if (axiosError.response && axiosError.response.data) {
+				const responseData = axiosError.response.data as { message?: string };
+				if (responseData.message?.includes('name')) {
+					errorMsg = 'Role name already exists';
+				}
+			}
+
+			toast.error(`Failed Ceating Role: ${errorMsg}`, {
 				position: 'top',
 				duration: 3000
 			})
