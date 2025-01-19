@@ -257,7 +257,7 @@ const handleCancel = () => {
 	<div class="user-dashboard">
 		<form class="user-form" @submit.prevent="handleSubmit">
 			<h1 v-if="!isUpdate">Create User</h1>
-			<h1 v-else="isUpdate">Update User</h1>
+			<h1 v-else>Update User</h1>
 			<div>
 				<div class="input-block">
 					<label>
@@ -299,7 +299,7 @@ const handleCancel = () => {
 			</div>
 			<div class="sumbmit-btns">
 				<button type="submit" v-if="!isUpdate">Create User</button>
-				<button type="submit" v-else="isUpdate" class="update-btn">Update User</button>
+				<button type="submit" v-else class="update-btn">Update User</button>
 				<button v-if="isUpdate" @click="handleCancel" class="cancel-btn" type="submit">Cancel</button>
 			</div>
 		</form>
