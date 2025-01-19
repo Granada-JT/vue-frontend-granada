@@ -106,20 +106,13 @@ const handleSubmit = async () => {
     toast.clear()
     const axiosError = error as AxiosError
     if (axiosError.status === 401) {
+      console.error('Failed to Login:', error)
       toast.clear()
       toast.error('Incorrect Email or Password. Please Try Again', {
         position: 'top',
         dismissible: true,
         duration: 30000
       })
-      
-    } else {
-      toast.error('Failed to Login', {
-        position: 'top',
-        duration: 3000
-      })
-
-      console.error('Failed to Login:', error)
     }
   }
 }
