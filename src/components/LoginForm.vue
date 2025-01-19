@@ -10,13 +10,41 @@ import LoginItem from './LoginItem.vue'
 
 const password = ref<string>('')
 const email = ref<string>('')
+
 const authStore = useAuthStore()
 const usersStore = useUsersStore()
 const rolesStore = useRolesStore()
+
 const router = useRouter()
 const toast = useToast()
 
+const errors = ref({
+  email: '',
+  password: ''
+})
+
+const validateForm = (): boolean => {
+  let isValid = true
+  errors.value = {
+    email: '',
+    password: ''
+  }
+
+  if (!email.value.trim()) {
+    errors.value.email = 'Email is required'
+    isValid = false
+  }
+  if (!password.value.trim()) {
+    errors.value.password = 'Password is required'
+    isValid = false
+  }
+
+  return isValid
+}
+
 const handleSubmit = async () => {
+  if (!validateForm()) return
+
   try {
     toast.clear()
     toast.info('Logging In', {
@@ -131,7 +159,6 @@ const handleLogout = () => {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 20px
   }
   button {
     width: 100px;
@@ -166,7 +193,10 @@ const handleLogout = () => {
       <template #heading>
         Email:
       </template>
-      <input type="email" v-model="email" />
+      <div class="form-footer">
+        <input type="email" v-model="email" />
+        <span class="error" v-if="errors.email">{{ errors.email }}</span>
+      </div>
     </LoginItem>
 
     <LoginItem v-if="!authStore.isLoggedIn">
@@ -175,6 +205,7 @@ const handleLogout = () => {
       </template>
       <div class="form-footer">
         <input type="password" v-model="password" />
+        <span class="error" v-if="errors.password">{{ errors.password }}</span>
         <button type="submit">Login</button>
       </div>
     </LoginItem>
