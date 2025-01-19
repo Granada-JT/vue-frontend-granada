@@ -4,14 +4,41 @@ import axios from 'axios'
 import { useRolesStore } from '@/stores/roles'
 import { useToast } from 'vue-toast-notification'
 
-const toast = useToast()
-const rolesStore = useRolesStore()
 const roleName = ref<string>('')
-const roleDescription = ref<string | null>('')
+const roleDescription = ref<string>('')
 const isUpdate = ref<boolean>(false)
 const roleId = ref<number>(0)
 
-const handleSubmit = async (e: Event) => {
+const toast = useToast()
+const rolesStore = useRolesStore()
+
+const errors = ref({
+  roleName: '',
+  roleDescription: ''
+})
+
+const validateForm = (): boolean => {
+  let isValid = true
+  errors.value = {
+    roleName: '',
+    roleDescription: ''
+  }
+
+  if (!roleName.value.trim()) {
+    errors.value.roleName = 'Role name is required'
+    isValid = false
+  }
+  if (!roleDescription.value.trim()) {
+    errors.value.roleDescription = 'Role description is required'
+    isValid = false
+  }
+
+  return isValid
+}
+
+const handleSubmit = async () => {
+	if (!validateForm()) return
+
   try {
 		await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true });
 
@@ -144,8 +171,10 @@ const handleCancel = () => {
 				<h1 v-if="isUpdate">Update Role</h1>
 				<label>Role Name:</label>
 				<input type="text" name="roleName" v-model="roleName"/>
+				<span class="error" v-if="errors.roleName">{{ errors.roleName }}</span>
 				<label>Role Description:</label>
 				<textarea type="text" name="roleDescription" v-model="roleDescription"></textarea>
+				<span class="error" v-if="errors.roleDescription">{{ errors.roleDescription }}</span>
 				<div class="submit-btns">
 					<button v-if="!isUpdate" type="submit">Create Role</button>
 					<button v-else="isUpdate" type="submit" class="update-btn">Update Role</button>
