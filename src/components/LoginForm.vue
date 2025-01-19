@@ -1,28 +1,36 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import { useToast } from 'vue-toast-notification'
+import axios, { AxiosError } from 'axios'
 import { useAuthStore } from '@/stores/auth'
 import { useUsersStore } from '@/stores/users'
 import { useRolesStore } from '@/stores/roles'
 import LoginItem from './LoginItem.vue'
 
-const password = ref('')
-const email = ref('')
+const password = ref<string>('')
+const email = ref<string>('')
 const authStore = useAuthStore()
 const usersStore = useUsersStore()
 const rolesStore = useRolesStore()
 const router = useRouter()
+const toast = useToast()
 
 const handleSubmit = async () => {
   try {
-    await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true });
+    toast.clear()
+    toast.info('Logging In', {
+      position: 'top',
+      dismissible: false
+    })
+
+    await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true })
 
     const xsrfTokenRow = document.cookie
       .split('; ')
       .find((row) => row.startsWith('XSRF-TOKEN='));
 
-    const xsrfToken = xsrfTokenRow ? decodeURIComponent(xsrfTokenRow.split('=')[1]) : undefined;
+    const xsrfToken = xsrfTokenRow ? decodeURIComponent(xsrfTokenRow.split('=')[1]) : undefined
 
     const postLoginResponse = await axios.post(
       'http://localhost:8000/login',
@@ -36,7 +44,7 @@ const handleSubmit = async () => {
         },
         withCredentials: true,
       }
-    );
+    )
 
     const getUserByEmailResponse = await axios.get(
       `http://localhost:8000/users/email/${email.value}`,
@@ -46,9 +54,14 @@ const handleSubmit = async () => {
         },
         withCredentials: true,
       }
-    );
+    )
 
     if (postLoginResponse.status === 200) {
+      toast.clear()
+      toast.success('Logged In Successfully', {
+        position: 'top',
+        duration: 3000
+      })
       authStore.login()
       if (getUserByEmailResponse.status === 200) {
         authStore.updateLoggedInUser(getUserByEmailResponse.data)
@@ -59,7 +72,22 @@ const handleSubmit = async () => {
     }
 
   } catch (error) {
-    console.error('Failed to login:', error);
+    toast.clear()
+    const axiosError = error as AxiosError
+    if (axiosError.status === 401) {
+      toast.clear()
+      toast.error('Incorrect Email or Password. Please Try Again', {
+        position: 'top',
+        dismissible: true,
+        duration: 30000
+      })
+    } else {
+      toast.error('Failed to Login', {
+        position: 'top',
+        duration: 3000
+      })
+      console.error('Failed to Login:', error)
+    }
   }
 };
 
