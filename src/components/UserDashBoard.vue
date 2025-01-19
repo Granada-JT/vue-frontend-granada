@@ -147,6 +147,14 @@ const handleDelete = async (id: number) => {
 	}
 }
 
+const handleCancel = () => {
+	isUpdate.value = false
+	fullName.value = ''
+	email.value = ''
+	nominatedPassword.value = ''
+	confirmPassword.value = ''
+	roleId.value = 0
+}
 </script>
 
 <template>
@@ -188,8 +196,11 @@ const handleDelete = async (id: number) => {
 				</label>
 				<input type="number" name="role" v-model="roleId"/>
 			</div>
-			<button type="submit" v-if="!isUpdate">Create User</button>
-			<button type="submit" v-else="isUpdate">Update User</button>
+			<div class="sumbmit-btns">
+				<button type="submit" v-if="!isUpdate">Create User</button>
+				<button type="submit" v-else="isUpdate" class="update-btn">Update User</button>
+				<button v-if="isUpdate" @click="handleCancel" class="cancel-btn" type="submit">Cancel</button>
+			</div>
 		</form>
     <div class="table">
       <h1>Users</h1>
@@ -312,6 +323,6 @@ const handleDelete = async (id: number) => {
 	}
 
 	.update-btn:hover {
-		background-color: #2f6681; /* a slightly darker shade of #3974a1 */
+		background-color: #2f6681;
 	}
 </style>
