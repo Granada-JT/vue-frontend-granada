@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 import WelcomeMessage from './components/WelcomeMessage.vue'
-import DashBoard from './components/RoleDashBoard.vue';
 import LoginView from './views/LoginView.vue';
 </script>
 
